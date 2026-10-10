@@ -55,7 +55,7 @@ input[type=text],input[type=password],textarea{width:100%;padding:10px 12px;bord
 table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:2px solid var(--line);text-align:center;font-size:.9rem}td:first-child,th:first-child{text-align:left}
 .pm{display:inline-flex;align-items:center;gap:4px}.pm button{width:36px;height:36px;border-radius:50%;border:3px solid var(--main);background:var(--card);color:var(--main);cursor:pointer;font-size:1.2rem;font-weight:700}
 </style></head><body><main id="app">Chargement…</main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
 <script>
 const SB_URL='https://rviohcndyypvofgixhzy.supabase.co',SB_KEY='sb_publishable_3wO5FA-Dx0_nUCy4tTcJMA_MA684HAX';
 </script>
@@ -87,7 +87,7 @@ function go(v,x){V=Object.assign({v},x||{});msg='';render()}
 function safe(){const e=document.activeElement;if(V.v=='tedit'||(e&&e.tagName=='INPUT'&&e.type!='checkbox'))return;render()}
 function render(){const a=document.getElementById('app');
 if(!db){a.innerHTML=`<h1>Gym 6ème</h1><p>${ERR||'Connexion à la base de la classe…'}</p>`;return}
-if(S.pin===undefined){a.innerHTML='Chargement…';return}
+if(S.pin===undefined){a.innerHTML=ERR?`<h1>Gym 6ème</h1><p>${esc(ERR)}</p>`:'Chargement…';return}
 if(S.pin===null){a.innerHTML=`<h1>Bienvenue, professeur</h1><p>Choisis un code à 4 chiffres : il servira à valider les niveaux.</p><input id="np" type="password" inputmode="numeric" maxlength="4" placeholder="Code à 4 chiffres"><button class="btn" onclick="setPin()">Enregistrer le code</button><p class="err">${msg}</p>`;return}
 ({home,student,family,level,teacher,tedit})[V.v]()}
 async function w(fn){try{await fn()}catch(e){alert('Enregistrement impossible : '+(e&&e.message||e)+'\nVérifie la connexion internet et la configuration de la base.')}}
@@ -163,7 +163,7 @@ function sub(path,fn){let last='';db.collection(path).onSnapshot(s=>{const g=JSO
 (async()=>{
 if(!/^https:\/\//.test(SB_URL)||!window.supabase){ERR='Configuration manquante : renseigne SB_URL et SB_KEY au début du fichier index.html.';render();return}
 sb=supabase.createClient(SB_URL,SB_KEY);db=mkDB();asset=mkAsset();render();
-let lp='?';db.doc('config/main').onSnapshot(s=>{const p=s.exists?s.data().pin:null;if(p===lp)return;lp=p;S.pin=p;safe()},()=>{});
+let lp='?';db.doc('config/main').onSnapshot(s=>{const p=s.exists?s.data().pin:null;if(p===lp)return;lp=p;ERR='';S.pin=p;safe()},e=>{ERR='Impossible de lire la base : '+((e&&(e.message||e.code))||'erreur')+'. Vérifie que le script SQL a bien été exécuté dans Supabase et que la clé est correcte.';safe()});
 sub('students',s=>{S.students=s.docs.map(d=>({id:d.id,name:d.data().name})).sort((a,b)=>a.name.localeCompare(b.name,'fr'))});
 sub('progress',s=>{S.prog={};s.docs.forEach(d=>S.prog[d.id]=d.data().p)});
 sub('levels',s=>{S.levels={};s.docs.forEach(d=>S.levels[d.id]=d.data())});
