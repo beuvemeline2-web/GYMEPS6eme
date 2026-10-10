@@ -26,9 +26,9 @@ button,input,textarea{font:inherit;color:inherit}
 .tile{background:var(--card);border:2px solid var(--line);border-top:7px solid var(--c,var(--main));border-radius:20px;padding:16px;text-align:left;cursor:pointer;min-height:96px;box-shadow:0 4px 12px var(--sh);transition:transform .12s}
 .tile:active{transform:translateY(2px)}
 .tile b{display:block;font-size:1.15rem;font-weight:600}
-.ico{width:84px;height:84px;color:#fff;background:var(--c,var(--main));border-radius:50%;display:block;margin-bottom:8px;padding:8px}
-.ico svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}
-.ico .hd{fill:currentColor;stroke:none}
+
+
+
 .bar{display:flex;gap:6px;margin-top:10px}.bar i{flex:1;height:14px;border-radius:7px;background:var(--line)}.bar i.on{background:var(--ok)}.bar i.cur{background:var(--acc)}
 .card{background:var(--card);border:2px solid var(--line);border-top:7px solid var(--c,var(--line));border-radius:22px;padding:18px;margin-top:16px;box-shadow:0 4px 12px var(--sh)}
 .ladder{display:flex;flex-direction:column;gap:12px;margin-top:16px}
@@ -54,6 +54,14 @@ input[type=text],input[type=password],textarea{width:100%;padding:10px 12px;bord
 .err{color:#d6336c;min-height:1.4em}.mut{color:var(--mut);font-size:.9rem}
 table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:2px solid var(--line);text-align:center;font-size:.9rem}td:first-child,th:first-child{text-align:left}
 .pm{display:inline-flex;align-items:center;gap:4px}.pm button{width:36px;height:36px;border-radius:50%;border:3px solid var(--main);background:var(--card);color:var(--main);cursor:pointer;font-size:1.2rem;font-weight:700}
+.ico{width:92px;height:92px;border-radius:26px;display:block;margin-bottom:8px;background:color-mix(in srgb,var(--c,var(--main)) 16%,var(--card));border:3px solid color-mix(in srgb,var(--c,var(--main)) 40%,var(--card));overflow:hidden}
+.ico svg{width:100%;height:100%;display:block}
+.ico .k,.ico .t,.ico .p{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ico .k{stroke:#f2c29b;stroke-width:5}.ico .t{stroke:var(--c);stroke-width:10}.ico .p{stroke:#31406b;stroke-width:10}
+.ico .sk{fill:#f2c29b}.ico .hr{fill:#5a3a22}.ico .fl{fill:var(--line)}.ico .wd{fill:#c9955a}
+.ico .ar{fill:none;stroke:var(--c);opacity:.55;stroke-width:2.5;stroke-dasharray:3 3;stroke-linecap:round}
+.fold{font-size:3rem;display:block;line-height:1}
+select{width:100%;padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--bg);margin:4px 0 10px;color:var(--ink)}
 </style></head><body><main id="app">Chargement…</main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
 <script>
@@ -67,15 +75,16 @@ const FAM=[
 {n:'Saut de module',l:['Saut sur le côté','Saut au-dessus avec pause sur le module à croupi','Saut de franchissement pieds devant','Saut de franchissement de chat, mains en premier']},
 {n:'Élément gymnique',l:['Saut droit','Saut demi-tour','Saut tour','Saut tour et demi']},
 {n:'Rotation transversale',l:['Poser la main sur le module et franchir la rivière','Roue sur un cercle, sans alignement','Roue sur une ligne','Roue 1 main']}];
-const H=(x,y)=>`<circle class="hd" cx="${x}" cy="${y}" r="7"/>`;
-const ARR=`<path d="M14 30Q40 8 66 28M66 28l-9-1M66 28l-2 9" stroke-width="3"/>`;
+const HD=(x,y,f)=>`<circle class="hr" cx="${x}" cy="${y}" r="7.2"/><circle class="sk" cx="${x+f*1.3}" cy="${y+1}" r="6"/>`;
+const FL='<rect class="fl" x="4" y="70" width="72" height="6" rx="3"/>';
+const ROLL=`<path class="ar" d="M16 34Q40 8 66 30M66 30l-8-1M66 30l-1 8"/><path class="k" d="M34 52L28 66"/><path class="t" d="M36 50Q50 30 62 50"/><path class="k" d="M62 52L58 64L44 66"/><path class="p" d="M62 50L60 58"/>${HD(30,54,-1)}`;
 const SVG=[
-`<svg viewBox="0 0 80 80">${ARR}${H(26,52)}<path d="M32 46Q50 34 62 52"/><path d="M62 52Q56 66 44 62"/><path d="M26 60l12 6"/></svg>`,
-`<svg viewBox="0 0 80 80"><g transform="translate(80,0) scale(-1,1)">${ARR}${H(26,52)}<path d="M32 46Q50 34 62 52"/><path d="M62 52Q56 66 44 62"/><path d="M26 60l12 6"/></g></svg>`,
-`<svg viewBox="0 0 80 80">${H(40,58)}<path d="M40 50V12M40 50L30 72M40 50L50 72"/><path d="M4 74h72" stroke-width="3"/></svg>`,
-`<svg viewBox="0 0 80 80"><rect x="30" y="54" width="34" height="18" rx="3"/>${H(60,26)}<path d="M54 32L34 38L16 46M34 38L18 34M54 32L64 50"/></svg>`,
-`<svg viewBox="0 0 80 80">${H(40,14)}<path d="M40 22V46M40 28L20 20M40 28L60 20M40 46L18 66M40 46L62 66"/></svg>`,
-`<svg viewBox="0 0 80 80">${H(40,62)}<path d="M40 54V38M40 38L20 12M40 38L60 12M40 50L28 72M40 50L52 72"/><path d="M4 76h72" stroke-width="3"/></svg>`];
+`<svg viewBox="0 0 80 80">${FL}${ROLL}</svg>`,
+`<svg viewBox="0 0 80 80">${FL}<g transform="translate(80 0) scale(-1 1)">${ROLL}</g></svg>`,
+`<svg viewBox="0 0 80 80">${FL}<path class="k" d="M40 50L33 70M40 50L47 70"/><path class="t" d="M40 50L40 28"/><path class="p" d="M40 28L40 20"/><path class="k" d="M39 20L38 6M41 20L42 6"/>${HD(40,58,0)}</svg>`,
+`<svg viewBox="0 0 80 80">${FL}<rect class="wd" x="22" y="48" width="38" height="22" rx="3"/><rect x="22" y="48" width="38" height="6" rx="3" fill="#2f7f86"/><path class="k" d="M52 34L64 46"/><path class="k" d="M34 36L20 26M34 36L22 46"/><path class="t" d="M52 33L36 36"/><path class="p" d="M36 36L30 32M36 36L29 42"/>${HD(58,29,1)}</svg>`,
+`<svg viewBox="0 0 80 80">${FL}<path class="k" d="M40 26L22 14M40 26L58 14"/><path class="k" d="M40 44L18 62M40 44L62 62"/><path class="t" d="M40 26L40 44"/><path class="p" d="M40 44L32 52M40 44L48 52"/>${HD(40,16,0)}</svg>`,
+`<svg viewBox="0 0 80 80">${FL}<path class="ar" d="M10 50Q14 18 44 8M44 8l-8 0M44 8l-4 7"/><path class="k" d="M40 52L30 70M40 52L50 70"/><path class="k" d="M40 34L22 10M40 34L58 14"/><path class="t" d="M40 52L40 34"/><path class="p" d="M40 34L33 24M40 34L50 24"/>${HD(36,60,0)}</svg>`];
 const ICO=[0,1,2,3,4,5];
 const DEF={'0_0':{tips:['Menton rentré sur la poitrine','Mains posées au sol, écartées largeur d’épaules','Pousse avec les jambes et reste groupé'],crit:['Je me roule en rond, sans poser la tête au sol','Je me relève sans l’aide des mains','Je reste groupé du début à la fin']}};
 let db=null,asset=null,S={students:[],prog:{},levels:{},pin:undefined},V={v:'home'},pin='',cb=null,msg='';
@@ -89,14 +98,20 @@ function render(){const a=document.getElementById('app');
 if(!db){a.innerHTML=`<h1>Gym 6ème</h1><p>${ERR||'Connexion à la base de la classe…'}</p>`;return}
 if(S.pin===undefined){a.innerHTML=ERR?`<h1>Gym 6ème</h1><p>${esc(ERR)}</p>`:'Chargement…';return}
 if(S.pin===null){a.innerHTML=`<h1>Bienvenue, professeur</h1><p>Choisis un code à 4 chiffres : il servira à valider les niveaux.</p><input id="np" type="password" inputmode="numeric" maxlength="4" placeholder="Code à 4 chiffres"><button class="btn" onclick="setPin()">Enregistrer le code</button><p class="err">${msg}</p>`;return}
-({home,student,family,level,teacher,tedit})[V.v]()}
+({home,cls,student,family,level,teacher,tedit})[V.v]()}
 async function w(fn){try{await fn()}catch(e){alert('Enregistrement impossible : '+(e&&e.message||e)+'\nVérifie la connexion internet et la configuration de la base.')}}
 function setPin(){const p=document.getElementById('np').value;if(!/^\d{4}$/.test(p)){msg='Entrez exactement 4 chiffres.';return render()}w(()=>db.doc('config/main').set({pin:p}))}
 const COL=['#e8744f','#d9628f','#8470d6','#4a97d1','#3fa578','#d89a2b'];const ic=i=>`<span class="ico" style="--c:${COL[i]}">${SVG[i]}</span>`;
-function home(){document.getElementById('app').innerHTML=`<div class="top"><h1 class="hero">🤸 Gym – Qui es-tu ? 🏅</h1><button class="btn alt sm" onclick="ask(()=>go('teacher'))">Espace professeur</button></div>
-${S.students.length?`<div class="grid">${S.students.map(s=>`<button class="tile" onclick="go('student',{id:'${esc(s.id)}'})"><b>👤 ${esc(s.name)}</b></button>`).join('')}</div>`:'<div class="card">Aucun élève pour le moment. Ouvre l’espace professeur pour ajouter la classe.</div>'}`}
+const CLS=['6A','6B'],CC={'6A':'#4a97d1','6B':'#3fa578','Autres':'#8a97ad'};
+const clsOf=s=>CLS.includes(s.cls)?s.cls:'Autres';
+function home(){const g=[...CLS,...(S.students.some(x=>clsOf(x)=='Autres')?['Autres']:[])];
+document.getElementById('app').innerHTML=`<div class="top"><h1 class="hero">🤸 Gym – Choisis ta classe 🏅</h1><button class="btn alt sm" onclick="ask(()=>go('teacher'))">Espace professeur</button></div>
+<div class="grid">${g.map(c=>`<button class="tile" style="--c:${CC[c]}" onclick="go('cls',{c:'${c}'})"><span class="fold">📁</span><b>${c}</b><span class="mut">${S.students.filter(x=>clsOf(x)==c).length} élève(s)</span></button>`).join('')}</div>`}
+function cls(){const l=S.students.filter(x=>clsOf(x)==V.c);
+document.getElementById('app').innerHTML=`<button class="btn alt sm" onclick="go('home')">← Les classes</button><h1 style="color:${CC[V.c]||'inherit'}">📁 ${esc(V.c)} – Qui es-tu ?</h1>
+${l.length?`<div class="grid">${l.map(s=>`<button class="tile" style="--c:${CC[V.c]}" onclick="go('student',{id:'${esc(s.id)}'})"><b>👤 ${esc(s.name)}</b></button>`).join('')}</div>`:'<div class="card">Aucun élève dans cette classe pour le moment.</div>'}`}
 function student(){const s=S.students.find(x=>x.id==V.id);if(!s)return go('home');const p=P(s.id);
-document.getElementById('app').innerHTML=`<button class="btn alt sm" onclick="go('home')">← Changer d’élève</button><h1>👋 Salut ${esc(s.name)} !</h1><p class="mut">Choisis une famille pour voir ta progression.</p>
+document.getElementById('app').innerHTML=`<button class="btn alt sm" onclick="go('cls',{c:'${clsOf(s)}'})">← Ma classe</button><h1>👋 Salut ${esc(s.name)} !</h1><p class="mut">Choisis une famille pour voir ta progression.</p>
 <div class="grid">${FAM.map((f,i)=>`<button class="tile" style="--c:${COL[i]}" onclick="go('family',{id:'${esc(s.id)}',f:${i}})">${ic(i)}<b>${f.n}</b><span class="mut">${p[i]>=4?'Famille terminée ✓':'Niveau '+(p[i]+1)+' / 4'}</span><span class="bar">${[0,1,2,3].map(j=>`<i class="${j<p[i]?'on':j==p[i]?'cur':''}"></i>`).join('')}</span></button>`).join('')}</div>`}
 function family(){const s=S.students.find(x=>x.id==V.id);if(!s)return go('home');const p=P(s.id)[V.f],F=FAM[V.f];
 document.getElementById('app').innerHTML=`<button class="btn alt sm" onclick="go('student',{id:'${esc(s.id)}'})">← Mes familles</button>
@@ -120,15 +135,16 @@ function modal(t){t=t||'Code du professeur';let m=document.getElementById('md');
 m.innerHTML=`<div><h2>${t}</h2><div class="pin">${'●'.repeat(pin.length)}</div><div class="err">${msg}</div><div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="btn alt" onclick="key('${n}')">${n}</button>`).join('')}<button class="btn alt" onclick="closeM()">Annuler</button><button class="btn alt" onclick="key('0')">0</button><button class="btn alt" onclick="pin=pin.slice(0,-1);modal(document.getElementById('md').dataset.t)">⌫</button></div></div>`}
 function closeM(){const m=document.getElementById('md');if(m)m.remove()}
 function key(n){const t=(document.getElementById('md')||{dataset:{}}).dataset.t;if(pin.length>=4)return;pin+=n;if(pin.length==4){if(pin===S.pin){const f=cb;closeM();f&&f()}else{pin='';msg='Code incorrect.';modal(t)}}else modal(t)}
+function TB(l){return`<div style="overflow-x:auto"><table><tr><th>Élève</th>${FAM.map((f,i)=>`<th>${i+1}. ${f.n}</th>`).join('')}<th></th></tr>${l.map(s=>`<tr><td>${esc(s.name)}</td>${FAM.map((f,i)=>`<td><span class="pm"><button aria-label="Retirer un niveau" onclick="setProg('${esc(s.id)}',${i},${P(s.id)[i]-1});teacher()">−</button><b>${P(s.id)[i]}</b><button aria-label="Valider un niveau" onclick="setProg('${esc(s.id)}',${i},${P(s.id)[i]+1});teacher()">+</button></span></td>`).join('')}<td><button class="btn alt sm" onclick="mvS('${esc(s.id)}')">Changer de classe</button> <button class="btn alt sm" onclick="delS('${esc(s.id)}')">Supprimer</button></td></tr>`).join('')}</table></div>`}
+function mvS(id){const s=S.students.find(x=>x.id==id);if(!s)return;const c=clsOf(s)=='6A'?'6B':'6A';w(()=>db.doc('students/'+id).set({name:s.name,cls:c}))}
 function teacher(){document.getElementById('app').innerHTML=`<div class="top"><button class="btn alt sm" onclick="go('home')">← Retour</button><h1>Espace professeur</h1></div>
 <div class="card"><h2>Validation des niveaux</h2><p class="mut">Niveaux validés par famille (0 à 4). Les changements apparaissent sur toutes les tablettes.</p>
-<div style="overflow-x:auto"><table><tr><th>Élève</th>${FAM.map((f,i)=>`<th>${i+1}. ${f.n}</th>`).join('')}<th></th></tr>
-${S.students.map(s=>`<tr><td>${esc(s.name)}</td>${FAM.map((f,i)=>`<td><span class="pm"><button aria-label="Retirer un niveau" onclick="setProg('${esc(s.id)}',${i},${P(s.id)[i]-1});teacher()">−</button><b>${P(s.id)[i]}</b><button aria-label="Valider un niveau" onclick="setProg('${esc(s.id)}',${i},${P(s.id)[i]+1});teacher()">+</button></span></td>`).join('')}<td><button class="btn alt sm" onclick="delS('${esc(s.id)}')">Supprimer</button></td></tr>`).join('')}</table></div></div>
+${[...CLS,'Autres'].map(c=>{const l=S.students.filter(x=>clsOf(x)==c);return l.length||c!='Autres'?`<h3>${c}</h3>`+(l.length?TB(l):'<p class="mut">Aucun élève.</p>'):''}).join('')}</div>
 <div class="card"><h2>Élèves de la classe</h2><p class="mut">RGPD : saisis uniquement des prénoms (ou prénom + initiale), sans nom de famille ni photo d’élève.</p>
-<input id="ns" type="text" placeholder="Prénom (plusieurs possibles, séparés par une virgule)" onkeydown="if(event.key=='Enter')addS()"><button class="btn sm" onclick="addS()">Ajouter</button></div>
+<select id="nc" aria-label="Classe"><option>6A</option><option>6B</option></select><input id="ns" type="text" placeholder="Prénom (plusieurs possibles, séparés par une virgule)" onkeydown="if(event.key=='Enter')addS()"><button class="btn sm" onclick="addS()">Ajouter</button></div>
 <div class="card"><h2>Contenu des niveaux</h2><div class="grid">${FAM.map((f,i)=>`<button class="tile" style="--c:${COL[i]}" onclick="go('tedit',{f:${i},l:0})">${ic(i)}<b>${f.n}</b><span class="mut">Titres, conseils, vidéos</span></button>`).join('')}</div></div>
 <div class="card"><button class="btn alt sm" onclick="chPin()">Changer le code</button></div>`}
-function addS(){const el=document.getElementById('ns');const n=el.value.split(/[\n,;]/).map(x=>x.trim()).filter(Boolean);el.value='';w(async()=>{for(const x of n)await db.collection('students').add({name:x.slice(0,30)})})}
+function addS(){const el=document.getElementById('ns'),c=document.getElementById('nc').value;const n=el.value.split(/[\n,;]/).map(x=>x.trim()).filter(Boolean);el.value='';w(async()=>{for(const x of n)await db.collection('students').add({name:x.slice(0,30),cls:c})})}
 function delS(id){if(!confirm('Supprimer cet élève et sa progression ?'))return;w(async()=>{await db.doc('students/'+id).delete();await db.doc('progress/'+id).delete()})}
 function chPin(){const p=prompt('Nouveau code à 4 chiffres');if(/^\d{4}$/.test(p||'')){w(()=>db.doc('config/main').set({pin:p}));alert('Code modifié.')}else if(p!==null)alert('Il faut 4 chiffres.')}
 function tedit(){const{f,l}=V,c=C(f,l);const med=c.m?(c.mt&&c.mt.startsWith('image')?`<img src="${esc(c.m)}">`:`<video src="${esc(c.m)}" controls playsinline onloadedmetadata="vchk(this)" onerror="vchk(this,1)"></video>`):'Aucun média';
@@ -164,7 +180,7 @@ function sub(path,fn){let last='';db.collection(path).onSnapshot(s=>{const g=JSO
 if(!/^https:\/\//.test(SB_URL)||!window.supabase){ERR='Configuration manquante : renseigne SB_URL et SB_KEY au début du fichier index.html.';render();return}
 sb=supabase.createClient(SB_URL,SB_KEY);db=mkDB();asset=mkAsset();render();
 let lp='?';db.doc('config/main').onSnapshot(s=>{const p=s.exists?s.data().pin:null;if(p===lp)return;lp=p;ERR='';S.pin=p;safe()},e=>{ERR='Impossible de lire la base : '+((e&&(e.message||e.code))||'erreur')+'. Vérifie que le script SQL a bien été exécuté dans Supabase et que la clé est correcte.';safe()});
-sub('students',s=>{S.students=s.docs.map(d=>({id:d.id,name:d.data().name})).sort((a,b)=>a.name.localeCompare(b.name,'fr'))});
+sub('students',s=>{S.students=s.docs.map(d=>({id:d.id,name:d.data().name,cls:d.data().cls})).sort((a,b)=>a.name.localeCompare(b.name,'fr'))});
 sub('progress',s=>{S.prog={};s.docs.forEach(d=>S.prog[d.id]=d.data().p)});
 sub('levels',s=>{S.levels={};s.docs.forEach(d=>S.levels[d.id]=d.data())});
 })();
